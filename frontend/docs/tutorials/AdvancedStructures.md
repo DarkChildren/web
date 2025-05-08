@@ -5,9 +5,9 @@ sidebar_label: "Advanced Structures"
 
 ## Array manipulation
 
-### Finding an empty slot properly
+### Encontrar una posición vacía correctamente
 
-This example shows how to find an empty slot in an array using standard coding practices.
+Este ejemplo muestra cómo encontrar una posición vacía en un arreglo usando prácticas estándar de programación.
 
 ```pawn
 new
@@ -26,7 +26,7 @@ stock FindEmptySlot()
 }
 ```
 
-This basic example assumes an array slot is empty if its value is 0. The loop loops through all values in the array (could also be done with a constant) as long as the values are not 0. When it reaches one which is 0 the while condition will fail and the loop ends without using a break as is common practice but discouraged in situations like this. This function also returns -1 if a free slot is not found, which would need to be checked at the other end. More commonly you would use the found id straight away:
+Este ejemplo básico asume que una posición del arreglo está vacía si su valor es 0. El bucle recorre todos los valores del arreglo (también podría hacerse con una constante) mientras los valores no sean 0. Cuando encuentra uno que sea 0, la condición del while fallará y el bucle terminará sin usar break, lo cual es una práctica común pero desaconsejada en situaciones como esta. Esta función también devuelve -1 si no se encuentra una posición libre, lo cual debe verificarse desde el otro lado. Más comúnmente, se usaría el ID encontrado de inmediato:
 
 ```pawn
 MyFunction()
@@ -48,29 +48,29 @@ MyFunction()
 }
 ```
 
-Obviously you would replace the "gMyArray[i]" expression with your own indication of a slot in use.
+Obviamente, deberías reemplazar gMyArray[i] con tu propia condición de posición ocupada.
 
-### List
+### Listas
 
-#### Introduction
+#### Introducción
 
-Lists are a very useful type of structure, they're basically an array where the next piece or relevant data is pointed to by the last piece.
+Las listas son un tipo de estructura muy útil; básicamente son un arreglo donde el siguiente dato relevante es apuntado por el dato anterior.
 
-Example:
+Ejemplo:
 
-Say you have the following array:
+Supón que tienes el siguiente arreglo:
 
 ```pawn
 3, 1, 64, 2, 4, 786, 2, 9
 ```
 
-If you wanted to sort the array you would end up with:
+Sin quisieras ordenarlo obtendrías:
 
 ```pawn
 1, 2, 2, 3, 4, 9, 64, 786
 ```
 
-If however you wanted to leave the data in the original order but still know the numbers in order for some reason (it's just an example), you have a problem, how are you meant to have numbers in two orders at once? This would be a good use of lists. To construct a list from this data you would need to make the array into a 2d array, where the second dimension was 2 cells big, the first dimension containing the original number, the other containing the index of the next largest number. You would also need a separate variable to hold the index of the lowest number, so your new array would look like:
+Pero si quisieras mantener el orden original de los datos y aun así conocer los números en orden (por alguna razón), ¿cómo tendrías los números en dos órdenes al mismo tiempo? Aquí es donde las listas son útiles. Para construir una lista de estos datos necesitas convertir el arreglo en uno 2D, donde la segunda dimensión tiene 2 celdas: la primera contiene el número original y la otra el índice del siguiente número más grande. También necesitas una variable separada para guardar el índice del número más pequeño. El nuevo arreglo sería:
 
 ```pawn
 start = 1
@@ -78,31 +78,33 @@ start = 1
 4, 3, 5,  6, 7, -1,  0, 2
 ```
 
-The next index associated with 786 is -1, this is an invalid array index and indicates the end of the list, i.e. there are no more numbers. The two 2's could obviously be either way round, the first one in the array is the first on in the list too as it's the more likely one to be encountered first.
+El índice asociado a 786 es -1, lo que indica el final de la lista. Los dos 2 obviamente podrían estar en cualquier orden, el primero es el que aparece primero en la lista ya que es más probable que se encuentre antes.
 
-The other advantage of this method of sorting the numbers is adding more numbers is a lot faster. If you wanted to add another number 3 to the sorted array you would need to first shift at least 4 numbers one slot to the right to make space, not terrible here but very slow in larger arrays. With the list version you could just append the 3 to the end of the array and modify a single value in the list;
+Otra ventaja de este método de ordenar números es que agregar más es mucho más rápido. Si quisieras agregar otro número 3 a la lista ordenada, tendrías que mover al menos 4 números una posición a la derecha. En una lista, solo agregas el nuevo número al final y modificas un único valor:
 
 ```pawn
 start = 1
 3, 1, 64, 2, 4, 786, 2, 9, 3
 8, 3, 5,  6, 7, -1,  0, 2, 4
-^ modify this value        ^ next highest slot
+^ modificar este valor        ^ Apunta al siguiente número más alto
 ```
 
-None of the other numbers have moved so none of the other indexes need updating, just make the next lowest number point to the new number and make the new number point the number the next lowest used to be pointing to. Removing a value is even easier:
+Los otros números no se mueven, por lo tanto sus índices no se modifican.
+Eliminar un valor es incluso más fácil:
 
 ```pawn
 start = 1
 3, 1, 64, X, 4, 786, 2, 9, 3
 8, 6, 5,  6, 7, -1,  0, 2, 4
-   ^ Changed to jump over the removed value
+   ^ cambiado para saltar el valor eliminado
 ```
 
-Here the first 2 has been removed and the number which pointed to that number (the 1) has been updated to point to the number the removed number was pointing to. In this example neither the removed number's pointer nor number have been removed, but you cannot possibly get to that slot following the list so it doesn't matter, it is effectively removed.
+Aquí, se ha eliminado el primer 2 y se ha actualizado el índice del número que lo apuntaba (el 1) para que apunte al número al que apuntaba el 2 eliminado. Técnicamente no se borra ni el número ni el puntero, pero ya no se puede alcanzar esa posición, así que efectivamente está eliminado.
 
-#### Types
 
-The lists in the examples above were just basic single lists, you can also have double lists where every value points to the next value and the last value, these tend to have a pointer to the end of the list too to go backwards (e.g. to get the numbers in descending order):
+#### Tipos
+
+Las listas anteriores eran listas simples. También se pueden tener listas dobles, donde cada valor apunta al siguiente y al anterior. Estas suelen tener un puntero al final de la lista para poder recorrerla hacia atrás:
 
 ```pawn
 start = 1
@@ -112,7 +114,7 @@ next:  8, 3,  5,  6, 7, -1,  0, 2, 4
 last:  6, -1, 7,  1, 8, 2,   3, 4, 0
 ```
 
-You have to be careful with these, especially when you have more than one of any value, that the last pointer points to the number who's next pointer goes straight back again, e.g this is wrong:
+Debes tener cuidado con estas, especialmente cuando hay valores repetidos. Por ejemplo, esto está mal:
 
 ```pawn
 2,  3, 3
@@ -120,7 +122,7 @@ You have to be careful with these, especially when you have more than one of any
 -1, 2, 0
 ```
 
-The 2's next pointer points to the 3 in slot one, but that 3's last pointer doesn't go back to the two, both lists are in order on their own (as the two threes can be either way round) but together they are wrong, the correct version would be:
+El puntero de "siguiente" de 2 apunta al 3 en la posición 1, pero el puntero "anterior" de ese 3 no apunta de regreso al 2. Una versión correcta sería:
 
 ```pawn
 2,  3, 3
@@ -140,9 +142,9 @@ end = 5
 6, 5,  7,  1, 8, 2,   3, 4, 0
 ```
 
-#### Mixed lists
+#### Listas Mixtas
 
-Mixed lists are arrays containing multiple lists at once. An example could be an array of values, sorted by a list, with another list linking all unused slots so you know where you can add a new value. Example (X means unused (free) slot):
+Las listas mixtas contienen múltiples listas en el mismo arreglo. Por ejemplo, puedes tener una lista ordenada y otra para rastrear espacios libres:
 
 ```pawn
 sortedStart = 3
